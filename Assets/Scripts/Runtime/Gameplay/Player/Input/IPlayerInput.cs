@@ -4,6 +4,8 @@ namespace Game.Gameplay
 {
     public interface IPlayerInput
     {
-        Vector2 SwipeDirection { get; }
+        Vector2Int SwipeDirection { get; }
+        
+        bool IsSwiping { get; }
     }
 }

@@ -8,16 +8,18 @@ namespace Game.Core
     public class Game : MonoBehaviour
     {
         [SerializeField] private PlayerInput _playerInput;
-        
+        [SerializeField] private FieldFactory _fieldFactory;
+
         private IGameLoopObjects _gameLoop;
-        
-        private void Awake()
+
+        private async void Awake()
         {
             _gameLoop = new GameLoopObjects();
             _playerInput.Init(Camera.main);
-            
-            IGameLoopObject player = new Player(_playerInput);
-            
+
+            IField field = await _fieldFactory.Create(width: 4, height: 4);
+            IGameLoopObject player = new Player(_playerInput, field);
+
             _gameLoop.Add(new GameLoopObjects(new List<IGameLoopObject>
             {
                 player
