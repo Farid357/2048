@@ -9,8 +9,14 @@ namespace Game.Gameplay
         
         public ITile Create(Vector2 position)
         {
+            int randomNumber = Random.Range(0, 4) <= 2 ? 2 : 4;
+            return Create(position, randomNumber);
+        }
+
+        public ITile Create(Vector2 position, int number)
+        {
             ITileView view = Instantiate(_tilePrefab, position, Quaternion.identity, _parent);
-            int number = Random.Range(0, 4) == 0 ? 2 : 4;
+            view.Show(number);
             return new Tile(number, view);
         }
     }

@@ -21,9 +21,9 @@ namespace Game.Gameplay
 
         public void Clear()
         {
-            if (!IsEmpty)
+            if (IsEmpty)
                 throw new InvalidOperationException($"Cell already hasn't tile!");
-
+            
             Tile = null;
         }
     }

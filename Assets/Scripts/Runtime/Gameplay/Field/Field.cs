@@ -1,5 +1,4 @@
 using System;
-using Game.Tools;
 using UnityEngine;
 
 namespace Game.Gameplay
@@ -16,68 +15,112 @@ namespace Game.Gameplay
 
             ICell cell = cells[0, 0];
             ICell secondCell = cells[3, 0];
-            Debug.Log(cell.Position);
-            Debug.Log(secondCell.Position);
-        
-            cell.PutTile(_tileFactory.Create(cell.Position));
-            secondCell.PutTile(_tileFactory.Create(secondCell.Position));
+
+            cell.PutTile(_tileFactory.Create(cell.Position, 2));
+            secondCell.PutTile(_tileFactory.Create(secondCell.Position, 2));
         }
 
         public void MoveCells(Vector2Int direction)
         {
-            bool isHorizontal = direction.IsHorizontal();
-            bool isInverted = direction.x < 0 || direction.y < 0;
-            int dimension = isHorizontal ? 0 : 1;
-
-            if (isInverted)
+            if (direction == Vector2Int.up)
             {
-                for (int i = _cells.GetLength(dimension) - 1; i > 0; i--)
+                for (int x = 0; x < _cells.GetLength(0); x++)
                 {
-                    Move(direction, isHorizontal, i);
+                    for (int y = 1; y < _cells.GetLength(1); y++)
+                    {
+                        Vector2Int position = new Vector2Int(x, y);
+                        TryMoveCell(position, -direction, y);
+                    }
+                }
+            }
+
+            if (direction == Vector2Int.down)
+            {
+                for (int x = 0; x < _cells.GetLength(0); x++)
+                {
+                    for (int y = _cells.GetLength(1) - 2; y >= 0; y--)
+                    {
+                        Vector2Int position = new Vector2Int(x, y);
+                        TryMoveCell(position, -direction, _cells.GetLength(1) - y - 1);
+                    }
+                }
+            }
+
+            if (direction == Vector2Int.right)
+            {
+                for (int y = 0; y < _cells.GetLength(1); y++)
+                {
+                    for (int x = _cells.GetLength(0) - 2; x >= 0; x--)
+                    {
+                        Vector2Int position = new Vector2Int(x, y);
+                        TryMoveCell(position, direction, _cells.GetLength(0) - x - 1);
+                    }
+                }
+            }
+
+            if (direction == Vector2Int.left)
+            {
+                for (int y = 0; y < _cells.GetLength(1); y++)
+                {
+                    for (int x = 1; x < _cells.GetLength(0); x++)
+                    {
+                        Vector2Int position = new Vector2Int(x, y);
+                        TryMoveCell(position, direction, x);
+                    }
                 }
             }
             
-            else
+            if (TryGetEmptyCell(out ICell cell))
             {
-                for (int i = 0; i < _cells.GetLength(dimension) - 1; i++)
-                {
-                    Move(direction, isHorizontal, i);
-                }
+                ITile tile = _tileFactory.Create(cell.Position);
+                cell.PutTile(tile);
             }
         }
 
-        private void Move(Vector2Int direction, bool isHorizontal, int index)
+        private void TryMoveCell(Vector2Int position, Vector2Int direction, int steps)
         {
-            Vector2Int position = isHorizontal ? new Vector2Int(index, 0) : new Vector2Int(0, index);
-            Vector2Int nextCellPosition = position + direction;
-
             ICell currentCell = _cells[position.x, position.y];
-            ICell nextCell = _cells[nextCellPosition.x, nextCellPosition.y];
+            ICell target = null;
 
-            if (currentCell.IsNotEmpty())
+            if (currentCell.IsEmpty)
+                return;
+
+            for (int i = 0; i < steps; i++)
             {
+                position += direction;
+                ICell nextCell = _cells[position.x, position.y];
+
                 if (nextCell.IsEmpty)
                 {
-                    currentCell.Tile.Move(nextCell.Tile.Position);
-                    currentCell.Clear();
-                }
-                else
-                {
-                    Merge(currentCell, nextCell);
+                    target = nextCell;
                 }
 
-                if (TryGetEmptyCell(out ICell cell))
+                else if (nextCell.Tile.Number == currentCell.Tile.Number)
                 {
-                    ITile tile = _tileFactory.Create(cell.Position);
-                    cell.PutTile(tile);
+                    target = nextCell;
+                    break;
                 }
+            }
+
+            if (target == null)
+                return;
+
+            if (target.IsEmpty)
+            {
+                currentCell.Tile.Move(target.Position);
+                target.PutTile(currentCell.Tile);
+                currentCell.Clear();
+            }
+            else
+            {
+                Merge(currentCell, target);
             }
         }
 
         private bool TryGetEmptyCell(out ICell cell)
         {
             cell = null;
-            
+
             for (int x = 0; x < _cells.GetLength(0); x++)
             {
                 for (int y = 0; y < _cells.GetLength(1); y++)
@@ -93,11 +136,11 @@ namespace Game.Gameplay
             return false;
         }
 
-        private void Merge(ICell firstCell, ICell secondCell)
+        private void Merge(ICell cell, ICell target)
         {
-            firstCell.Tile.Destroy();
-       //     firstCell.Clear();
-            secondCell.Tile.IncreaseNumber();
+            cell.Tile.Destroy();
+            cell.Clear();
+            target.Tile.IncreaseNumber();
         }
     }
 }

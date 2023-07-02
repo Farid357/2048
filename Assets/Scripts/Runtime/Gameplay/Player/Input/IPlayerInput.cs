@@ -6,6 +6,8 @@ namespace Game.Gameplay
     {
         Vector2Int SwipeDirection { get; }
         
-        bool IsSwiping { get; }
+        bool IsUp { get; }
+
+        void ResetSwipeAll();
     }
 }

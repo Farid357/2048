@@ -9,18 +9,19 @@ namespace Game.Gameplay
         private Vector2 _startTouch;
         private Camera _camera;
 
-        public Vector2Int SwipeDirection { get; private set; } = Vector2Int.zero;
-        
-        public bool IsSwiping => SwipeDirection != Vector2Int.zero;
-
         public void Init(Camera camera)
         {
             _camera = camera ? camera : throw new ArgumentNullException(nameof(camera));
         }
 
+        public Vector2Int SwipeDirection { get; private set; } = Vector2Int.zero;
+
+        public bool IsUp { get; private set; }
+
         public void OnPointerDown(PointerEventData eventData)
         {
             _startTouch = _camera.ScreenToWorldPoint(eventData.position);
+            SwipeDirection = Vector2Int.zero;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -31,6 +32,12 @@ namespace Game.Gameplay
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            IsUp = true;
+        }
+
+        public void ResetSwipeAll()
+        {
+            IsUp = false;
             SwipeDirection = Vector2Int.zero;
         }
     }

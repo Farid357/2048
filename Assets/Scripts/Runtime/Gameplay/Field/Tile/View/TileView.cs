@@ -12,16 +12,14 @@ namespace Game.Gameplay
         public void Show(int number)
         {
             _number.text = number.ToString();
-            int s = 2;
             int pow = 1;
 
-            while (number > s)
+            while (number > Mathf.Pow(2, pow))
             {
-                pow += 1;    
-                s *= 2;
+                pow += 1;
             }
 
-            _image.color = _colors[pow];
+            _image.color = _colors[pow - 1];
         }
 
         public void Move(Vector2 position)

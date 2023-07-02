@@ -17,10 +17,12 @@ namespace Game.Gameplay
 
         public void Update(float deltaTime)
         {
-            if (_input.IsSwiping)
+            if (_input.IsUp)
             {
-                Debug.Log(_input.SwipeDirection);
-                _field.MoveCells(_input.SwipeDirection);
+                if (_input.SwipeDirection != Vector2Int.zero)
+                    _field.MoveCells(_input.SwipeDirection);
+                
+                _input.ResetSwipeAll();
             }
         }
     }
