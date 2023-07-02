@@ -1,16 +1,13 @@
-using System;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Game.Gameplay
 {
-    public sealed class FieldFactory : MonoBehaviour
+    public sealed class CellsFactory : MonoBehaviour
     {
         [SerializeField] private Cell _cellPrefab;
         [SerializeField] private RectTransform _content;
-        [SerializeField] private TileFactory _tileFactory;
 
-        public async Task<IField> Create(int width, int height)
+        public ICell[,] Create(int width, int height)
         {
             ICell[,] cells = new ICell[width, height];
 
@@ -23,8 +20,7 @@ namespace Game.Gameplay
                 }
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(0.4f));
-            return new Field(cells, _tileFactory);
+            return cells;
         }
     }
 }

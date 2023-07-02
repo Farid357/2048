@@ -16,8 +16,6 @@ namespace Game.Gameplay
 
         public int Number { get; private set; }
 
-        public Vector2 Position { get; private set; }
-
         public void IncreaseNumber()
         {
             Number *= 2;
@@ -26,11 +24,7 @@ namespace Game.Gameplay
 
         public void Move(Vector2 position)
         {
-            if (Position == position)
-                throw new ArgumentOutOfRangeException($"Tile already has same position!");
-
             _view.Move(position);
-            Position = position;
         }
 
         public void Destroy()

@@ -25,13 +25,11 @@ namespace Game.Gameplay
 
             if (number == 2)
                 return;
-            
+
             int pow = 1;
 
             while (number > Mathf.Pow(2, pow))
-            {
                 pow += 1;
-            }
 
             Vector3 startScale = transform.localScale;
             transform.DOScale(transform.localScale * 1.2f, 0.2f).OnComplete(() => transform.localScale = startScale);

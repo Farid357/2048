@@ -8,13 +8,15 @@ namespace Game.Gameplay
     {
         private readonly ICell[,] _cells;
         private readonly ITileFactory _tileFactory;
+        private readonly IScore _score;
 
         private bool _movedCells;
         
-        public Field(ICell[,] cells, ITileFactory tileFactory)
+        public Field(ICell[,] cells, ITileFactory tileFactory, IScore score)
         {
             _cells = cells ?? throw new ArgumentNullException(nameof(cells));
             _tileFactory = tileFactory ?? throw new ArgumentNullException(nameof(tileFactory));
+            _score = score ?? throw new ArgumentNullException(nameof(score));
 
             ICell cell = cells[0, 0];
             ICell secondCell = cells[3, 0];
@@ -101,7 +103,6 @@ namespace Game.Gameplay
                 {
                     target = nextCell;
                 }
-
                 else if (nextCell.Tile.Number == currentCell.Tile.Number)
                 {
                     target = nextCell;
@@ -153,6 +154,7 @@ namespace Game.Gameplay
             cell.Tile.Destroy();
             cell.Clear();
             target.Tile.IncreaseNumber();
+            _score.Add(target.Tile.Number);
         }
     }
 }
