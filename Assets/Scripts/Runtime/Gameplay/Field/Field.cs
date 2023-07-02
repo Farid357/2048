@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Game.Gameplay
@@ -8,6 +9,8 @@ namespace Game.Gameplay
         private readonly ICell[,] _cells;
         private readonly ITileFactory _tileFactory;
 
+        private bool _movedCells;
+        
         public Field(ICell[,] cells, ITileFactory tileFactory)
         {
             _cells = cells ?? throw new ArgumentNullException(nameof(cells));
@@ -20,8 +23,12 @@ namespace Game.Gameplay
             secondCell.PutTile(_tileFactory.Create(secondCell.Position, 2));
         }
 
+        public bool HasWinningTile => _cells.Cast<ICell>().ToList().Find(cell => cell.IsEmpty == false && cell.Tile.Number == 2048) != null;
+
         public void MoveCells(Vector2Int direction)
         {
+            _movedCells = false;
+            
             if (direction == Vector2Int.up)
             {
                 for (int x = 0; x < _cells.GetLength(0); x++)
@@ -70,14 +77,14 @@ namespace Game.Gameplay
                 }
             }
             
-            if (TryGetEmptyCell(out ICell cell))
+            if (_movedCells && TryGetEmptyCell(out ICell cell))
             {
                 ITile tile = _tileFactory.Create(cell.Position);
                 cell.PutTile(tile);
             }
         }
 
-        private void TryMoveCell(Vector2Int position, Vector2Int direction, int steps)
+        private void TryMoveCell(Vector2Int position, Vector2Int direction, int maxSteps)
         {
             ICell currentCell = _cells[position.x, position.y];
             ICell target = null;
@@ -85,7 +92,7 @@ namespace Game.Gameplay
             if (currentCell.IsEmpty)
                 return;
 
-            for (int i = 0; i < steps; i++)
+            for (int i = 0; i < maxSteps; i++)
             {
                 position += direction;
                 ICell nextCell = _cells[position.x, position.y];
@@ -100,11 +107,15 @@ namespace Game.Gameplay
                     target = nextCell;
                     break;
                 }
+                else
+                {
+                    break;
+                }
             }
 
             if (target == null)
                 return;
-
+            
             if (target.IsEmpty)
             {
                 currentCell.Tile.Move(target.Position);
@@ -115,12 +126,12 @@ namespace Game.Gameplay
             {
                 Merge(currentCell, target);
             }
+            
+            _movedCells = true;
         }
 
         private bool TryGetEmptyCell(out ICell cell)
         {
-            cell = null;
-
             for (int x = 0; x < _cells.GetLength(0); x++)
             {
                 for (int y = 0; y < _cells.GetLength(1); y++)
@@ -133,6 +144,7 @@ namespace Game.Gameplay
                 }
             }
 
+            cell = null;
             return false;
         }
 

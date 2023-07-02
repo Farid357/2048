@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Game.GameLoop
+namespace Game.Loop
 {
     public sealed class GameLoopObjects : IGameLoopObjects
     {

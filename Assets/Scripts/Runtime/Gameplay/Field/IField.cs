@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game.Gameplay
 {
-    public interface IField
+    public interface IField : IReadOnlyField
     {
         void MoveCells(Vector2Int direction);
     }

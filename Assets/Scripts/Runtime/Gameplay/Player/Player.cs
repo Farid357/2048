@@ -1,5 +1,5 @@
 using System;
-using Game.GameLoop;
+using Game.Loop;
 using UnityEngine;
 
 namespace Game.Gameplay

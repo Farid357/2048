@@ -23,7 +23,7 @@ namespace Game.Gameplay
                 }
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(0.3f));
+            await Task.Delay(TimeSpan.FromSeconds(0.4f));
             return new Field(cells, _tileFactory);
         }
     }

@@ -1,4 +1,4 @@
-namespace Game.GameLoop
+namespace Game.Loop
 {
     public interface IGameLoopObjectsGroup
     {
