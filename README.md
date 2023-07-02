@@ -14,6 +14,7 @@ Gameplay: https://github.com/Farid357/2048/assets/104379303/e440d4f1-7adc-40c0-b
 ### Project tries
  - Follow **OOP**
  - Follow **SOLID**
+ - Follow **TDD**
  
 ### Plugins
  - TMPro
