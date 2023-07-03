@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Game.Tools;
 using UnityEngine;
 
 namespace Game.Gameplay
@@ -26,6 +28,28 @@ namespace Game.Gameplay
         }
 
         public bool HasWinningTile => _cells.Cast<ICell>().ToList().Find(cell => cell.IsEmpty == false && cell.Tile.Number == 2048) != null;
+
+        public void Load(FieldSnapshot snapshot)
+        {
+            _cells.Cast<ICell>().Where(cell => cell.IsEmpty == false).ToList().ForEach(cell =>
+            {
+                cell.Tile.Destroy();
+                cell.Clear();
+            });
+            
+            foreach (var (position, number) in snapshot.Cells)
+            {
+                ICell cell = _cells.Cast<ICell>().First(cell => cell.Position == position.ToUnity());
+                cell.PutTile(_tileFactory.Create(position.ToUnity(), number));
+            }
+        }
+
+        public FieldSnapshot Save()
+        {
+            var cells = new Dictionary<SerializableVector2, int>();
+            _cells.Cast<ICell>().Where(cell => cell.IsEmpty == false).ToList().ForEach(cell => cells.Add(cell.Position.ToSerializable(), cell.Tile.Number));
+            return new FieldSnapshot(cells);
+        }
 
         public void MoveCells(Vector2Int direction)
         {

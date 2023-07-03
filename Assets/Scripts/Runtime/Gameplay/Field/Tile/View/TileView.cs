@@ -38,7 +38,7 @@ namespace Game.Gameplay
 
         public void Move(Vector2 position)
         {
-            transform.DOMove(position, 0.2f).SetEase(Ease.InQuad);
+            transform.DOMove(position, 0.2f);
         }
 
         public void Destroy()
